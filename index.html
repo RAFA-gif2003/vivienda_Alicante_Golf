@@ -3,10 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vivienda en Alicante Golf</title>
-<meta name="description" content="Planta baja con terraza y sótano acondicionado en Alicante Golf. Plano interactivo y fotos de cada estancia.">
-<meta property="og:title" content="Vivienda en Alicante Golf — plano interactivo">
-<meta property="og:description" content="Planta baja con terraza ≈ 60 m², sótano acondicionado y urbanización con piscina y pádel.">
+<title>Bungalow frente al golf · Alicante Golf</title>
+<meta name="description" content="Bungalow en planta baja de doble anchura en Alicante Golf: 115 m² en una planta, terraza de 60 m² frente al golf y sótano acondicionado de 95 m². Plano interactivo, fotos y vídeo.">
+<meta property="og:title" content="Bungalow de doble anchura frente al golf · Alicante Golf">
+<meta property="og:description" content="115 m² en una planta, terraza de 60 m² frente al golf y sótano acondicionado de 95 m². Plano interactivo, fotos y vídeo.">
+<!-- Miniatura al compartir el enlace (WhatsApp, Facebook, Telegram…): es el archivo og.jpg subido a GitHub junto a index.html (1200×630). Para cambiarla, sube otro og.jpg. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rafa-gif2003.github.io/vivienda_Alicante_Golf/">
+<meta property="og:image" content="https://rafa-gif2003.github.io/vivienda_Alicante_Golf/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vistas al campo de golf desde la terraza">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://rafa-gif2003.github.io/vivienda_Alicante_Golf/og.jpg">
 <meta name="theme-color" content="#24412f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,6 +97,22 @@ h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.7rem,4.6
 .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:8px}
 footer{font-size:.8rem;color:var(--muted);text-align:center;padding:0 16px 100px}
 
+/* Descripción */
+.texto{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(18px,4vw,36px);max-width:760px}
+.texto h3{font-family:Fraunces,Georgia,serif;color:var(--green);font-size:1.3rem;margin:1.4em 0 .4em;line-height:1.2}
+.texto h3:first-child{margin-top:0;font-size:1.55rem}
+.texto p{margin:0 0 1em}
+.texto ul{margin:0 0 1em;padding-left:1.2em}
+.texto li{margin:.25em 0}
+.texto li::marker{color:var(--accent)}
+.texto strong{color:var(--green)}
+
+/* Vídeo */
+.video{max-width:900px}
+.video-frame{position:relative;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video p{color:var(--muted);font-size:.9rem;margin:10px 2px 0}
+
 /* Galería */
 .gal{position:fixed;inset:0;z-index:100;background:#0d0f0e;color:#fff;display:none;flex-direction:column}
 .gal.open{display:flex}
@@ -142,11 +167,12 @@ textarea{min-height:90px;resize:vertical}
 
 <header class="wrap">
   <div class="eyebrow">En venta · Alicante Golf</div>
-  <h1>Planta baja con terraza y sótano acondicionado</h1>
+  <h1>Bungalow de doble anchura frente al golf</h1>
   <ul class="chips">
-    <li>Planta ≈ 115 m²</li>
-    <li>Terraza ≈ 60 m² con barbacoa</li>
-    <li>Sótano acondicionado ≈ 95 m²</li>
+    <li>115 m² en una planta</li>
+    <li>Terraza 60 m² frente al golf</li>
+    <li>Sótano acondicionado 95 m²</li>
+    <li>4 dormitorios · 3 baños</li>
     <li>Piscina, jardines y pádel</li>
   </ul>
 </header>
@@ -157,6 +183,8 @@ textarea{min-height:90px;resize:vertical}
       <button class="tab" role="tab" id="tab-principal" aria-controls="panel-principal" aria-selected="true" data-panel="principal">Planta principal</button>
       <button class="tab" role="tab" id="tab-sotano" aria-controls="panel-sotano" aria-selected="false" data-panel="sotano">Sótano</button>
       <button class="tab" role="tab" id="tab-comunes" aria-controls="panel-comunes" aria-selected="false" data-panel="comunes">Zonas comunes</button>
+      <button class="tab" role="tab" id="tab-descripcion" aria-controls="panel-descripcion" aria-selected="false" data-panel="descripcion" hidden>Descripción</button>
+      <button class="tab" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="false" data-panel="video" hidden>Vídeo</button>
     </div>
   </div>
 </nav>
@@ -166,6 +194,11 @@ textarea{min-height:90px;resize:vertical}
   <section class="panel" id="panel-sotano" role="tabpanel" aria-labelledby="tab-sotano"></section>
   <section class="panel" id="panel-comunes" role="tabpanel" aria-labelledby="tab-comunes">
     <div class="grid" id="comunes-grid"></div>
+  </section>
+  <section class="panel" id="panel-descripcion" role="tabpanel" aria-labelledby="tab-descripcion"><article class="texto" id="descripcion"></article></section>
+  <section class="panel" id="panel-video" role="tabpanel" aria-labelledby="tab-video">
+    <div class="video"><div class="video-frame" id="video-frame"></div>
+      <p><a id="video-link" target="_blank" rel="noopener">Ver en YouTube</a></p></div>
   </section>
 
   <div class="cta-bar">
@@ -233,7 +266,9 @@ textarea{min-height:90px;resize:vertical}
    ===================================================================== */
 const CONFIG = {
   // URL de la aplicación web de Apps Script (Implementar → Aplicación web). Termina en /exec
-  API_URL: 'https://script.google.com/macros/s/AKfycbxMkWxpGAWykZUCOMJ8RVyIFOR87U0xO4b9XfiQPdgaJx1yd8NgEGg2aWZOfOt7-3c6/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxZ_WmH7E-vBVCUc9g0DMisQlspiPhh1GgnOs9JkeVTPhzkBDWZfh-HJ-iH5UqBHai_/exec',
+  // Vídeo de respaldo (solo si la API no responde). El vídeo "oficial" es el enlace de textos/video.txt en Drive.
+  VIDEO_RESPALDO: 'sJt_g2W1K_Y',
   // Respaldo por si la API no responde: fotos y planos actuales (ID de Drive por número).
   // (carpeta de Drive fotos_2026/anuncio_idealista, 9-oct-2026)
   RESPALDO: {
@@ -301,8 +336,10 @@ const COMUNES = [
 /* =====================================================================
    DATOS (Drive vía Apps Script, con respaldo)
    ===================================================================== */
-let FOTOS = {};      // 'NN' -> {id, name}
+let FOTOS = {};      // 'NN' -> [{id, name}, …]
 let PLANOS = {};     // principal/sotano -> id
+let DESCRIPCION = null; // texto de textos/descripcion.txt (null = sin pestaña)
+let VIDEO = null;       // ID de YouTube de textos/video.txt (null = sin pestaña)
 
 const imgURL = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
 const thumbURL = (id, w) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
@@ -320,6 +357,7 @@ function caption(name, fallback) {
   const out = [];
   for (let i = 1; i < base.length; i++) {
     if (/^(v\d+(\(\d+\))?|premium|retoque|nuevo)$/i.test(base[i])) break;
+    if (i === 1 && /^[a-z]$/i.test(base[i])) continue;   // sufijo de orden: 10_a_…, 10_b_…
     out.push(ACENTOS[base[i].toLowerCase()] || base[i].toLowerCase());
   }
   const s = out.join(' ').replace(/\bvinos\b/, 'de vinos');
@@ -328,8 +366,9 @@ function caption(name, fallback) {
 
 async function cargarDatos() {
   const resp = CONFIG.RESPALDO;
-  FOTOS = Object.fromEntries(Object.entries(resp.fotos).map(([n, id]) => [n, { id, name: '' }]));
+  FOTOS = Object.fromEntries(Object.entries(resp.fotos).map(([n, id]) => [n, [{ id, name: '' }]]));
   PLANOS = { ...resp.planos };
+  VIDEO = CONFIG.VIDEO_RESPALDO || null;
   if (!CONFIG.API_URL) return;
   try {
     const ctrl = new AbortController();
@@ -339,12 +378,17 @@ async function cargarDatos() {
     const j = await r.json();
     if (j && j.ok && Array.isArray(j.fotos) && j.fotos.length) {
       FOTOS = {};
-      j.fotos.forEach(f => { FOTOS[f.n] = { id: f.id, name: f.name }; });
+      j.fotos.forEach(f => { (FOTOS[f.n] = FOTOS[f.n] || []).push({ id: f.id, name: f.name }); });
       if (j.planos) { if (j.planos.principal) PLANOS.principal = j.planos.principal.id; if (j.planos.sotano) PLANOS.sotano = j.planos.sotano.id; }
+    }
+    if (j && j.ok) {
+      if ('descripcion' in j) DESCRIPCION = j.descripcion || null;
+      if ('video' in j) VIDEO = j.video || null;     // si se borra video.txt, desaparece la pestaña
     }
   } catch (e) { console.warn('API no disponible, se usa el respaldo', e); }
 }
-const fotosDe = lista => lista.filter(n => FOTOS[n]).map(n => ({ n, ...FOTOS[n] }));
+// Cada número puede tener varias fotos (01_salon_a.jpg, 01_salon_b.jpg…): se muestran todas, en orden
+const fotosDe = lista => lista.flatMap(n => (FOTOS[n] || []).map(f => ({ n, ...f })));
 
 /* =====================================================================
    PLANOS INTERACTIVOS
@@ -414,8 +458,48 @@ function pintarComunes() {
   g.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => { const z = zonas.find(x => x.id === c.dataset.id); abrirGaleria(z.nombre, fotosDe(z.fotos)); }));
 }
 
+/* Descripción: texto sencillo → HTML ("## " título, "- " lista, **negrita**, línea en blanco = párrafo) */
+function pintarDescripcion() {
+  const tab = document.getElementById('tab-descripcion');
+  if (!DESCRIPCION) { tab.hidden = true; return; }
+  const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  let html = '', lista = false, parrafo = [];
+  const cierraP = () => { if (parrafo.length) { html += `<p>${parrafo.map(fmt).join('<br>')}</p>`; parrafo = []; } };
+  const cierraL = () => { if (lista) { html += '</ul>'; lista = false; } };
+  DESCRIPCION.split('\n').forEach(l => {
+    const t = l.trim();
+    if (/^#(?!#)/.test(t)) return;
+    if (!t) { cierraP(); cierraL(); return; }
+    if (t.startsWith('## ')) { cierraP(); cierraL(); html += `<h3>${fmt(t.slice(3))}</h3>`; return; }
+    if (/^[-•·] /.test(t)) { cierraP(); if (!lista) { html += '<ul>'; lista = true; } html += `<li>${fmt(t.slice(2))}</li>`; return; }
+    cierraL(); parrafo.push(t);
+  });
+  cierraP(); cierraL();
+  document.getElementById('descripcion').innerHTML = html;
+  tab.hidden = false;
+}
+
+/* Vídeo de YouTube (se carga al abrir la pestaña) */
+function pintarVideo() {
+  const tab = document.getElementById('tab-video');
+  if (!VIDEO || !/^[\w-]{11}$/.test(VIDEO)) { tab.hidden = true; return; }
+  document.getElementById('video-link').href = 'https://youtu.be/' + VIDEO;
+  tab.hidden = false;
+}
+function cargarVideo() {
+  const f = document.getElementById('video-frame');
+  if (!VIDEO || f.dataset.id === VIDEO) return;
+  f.dataset.id = VIDEO;
+  f.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${VIDEO}?rel=0&modestbranding=1&playsinline=1" title="Vídeo de la vivienda" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>`;
+}
+function pararVideo() { const f = document.getElementById('video-frame'); f.innerHTML = ''; delete f.dataset.id; }
+
 /* Pestañas */
 function mostrar(clave, scroll) {
+  const t = document.getElementById('tab-' + clave);
+  if (!t || t.hidden) clave = 'principal';
+  if (clave === 'video') cargarVideo(); else pararVideo();
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.panel === clave)));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + clave));
   if (location.hash !== '#' + clave) history.replaceState(null, '', '#' + clave + location.search.replace(/^\?/, '?'));
@@ -423,7 +507,7 @@ function mostrar(clave, scroll) {
 }
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => mostrar(t.dataset.panel)));
 document.querySelector('.tablist').addEventListener('keydown', e => {
-  const tabs = [...document.querySelectorAll('.tab')]; const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+  const tabs = [...document.querySelectorAll('.tab')].filter(t => !t.hidden); const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const j = (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; tabs[j].focus(); mostrar(tabs[j].dataset.panel); }
 });
 
@@ -533,9 +617,9 @@ function activarEditor(plan, clave) {
    ===================================================================== */
 (async function () {
   await cargarDatos();
-  pintarPlanta('principal'); pintarPlanta('sotano'); pintarComunes();
+  pintarPlanta('principal'); pintarPlanta('sotano'); pintarComunes(); pintarDescripcion(); pintarVideo();
   const h = location.hash.replace('#', '');
-  if (['principal', 'sotano', 'comunes'].includes(h)) mostrar(h);
+  if (['principal', 'sotano', 'comunes', 'descripcion', 'video'].includes(h)) mostrar(h);
 })();
 </script>
 </body>
