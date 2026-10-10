@@ -581,8 +581,10 @@ form.addEventListener('submit', async e => {
       ok = true;
     }
     form.reset();
-    aviso('¡Gracias! Hemos recibido tu solicitud y te contactaremos en breve.', true);
-    setTimeout(() => dlg.open && dlg.close(), 3500);
+    aviso((d.email || '').trim()
+      ? '¡Gracias! Hemos recibido tu solicitud y te hemos enviado un email con más información. Si no lo ves en unos minutos, revisa la carpeta de spam o promociones.'
+      : '¡Gracias! Hemos recibido tu solicitud y te contactaremos en breve.', true);
+    setTimeout(() => dlg.open && dlg.close(), (d.email || '').trim() ? 9000 : 4000);
   } catch (err) {
     aviso('No se ha podido enviar. Inténtalo de nuevo en unos minutos.');
   } finally { btn.disabled = false; btn.textContent = 'Enviar'; }
