@@ -347,13 +347,18 @@ const ORIGEN = (PARAMS.get('o') || (document.referrer && !document.referrer.incl
 /* Tus propias visitas no cuentan: abre la web una vez con ?yo=1 en cada móvil/ordenador tuyo (?yo=0 lo deshace) */
 try { if (PARAMS.get('yo') === '1') localStorage.setItem('noContar', '1'); if (PARAMS.get('yo') === '0') localStorage.removeItem('noContar'); } catch (e) {}
 const NO_CONTAR = (() => { try { return localStorage.getItem('noContar') === '1'; } catch (e) { return false; } })();
+/* Código anónimo del visitante (solo en su navegador; no guarda datos personales) y nº de visita */
+const VISITANTE = (() => { try { let v = localStorage.getItem('vid');
+  if (!v) { v = 'V-' + Math.random().toString(36).slice(2, 8).toUpperCase(); localStorage.setItem('vid', v); } return v; } catch (e) { return ''; } })();
+const NVISITA = (() => { try { let n = sessionStorage.getItem('nv');
+  if (!n) { n = String((+localStorage.getItem('nvis') || 0) + 1); localStorage.setItem('nvis', n); sessionStorage.setItem('nv', n); } return +n; } catch (e) { return 0; } })();
 const vistos = new Set();
 function evento(tipo, detalle = '') {
   if (NO_CONTAR || !CONFIG.API_URL) return;
   const k = tipo + '|' + detalle; if (vistos.has(k)) return; vistos.add(k);   // cada cosa cuenta una vez por visita
   const dispositivo = matchMedia('(max-width: 760px)').matches ? 'movil' : 'ordenador';
   try { fetch(CONFIG.API_URL, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ tipo: 'evento', evento: tipo, detalle, origen: ORIGEN, dispositivo }) }); } catch (e) {}
+    body: JSON.stringify({ tipo: 'evento', evento: tipo, detalle, origen: ORIGEN, dispositivo, visitante: VISITANTE, n: NVISITA }) }); } catch (e) {}
 }
 
 const imgURL = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
@@ -583,7 +588,7 @@ form.addEventListener('submit', async e => {
   if (d.consentimiento !== 'si') return aviso('Necesitamos tu consentimiento para usar los datos de contacto.');
   if (!CONFIG.API_URL) return aviso('El formulario aún no está conectado. Vuelve a intentarlo más tarde.');
   d.ms = Date.now() - abiertoEn;
-  d.origen = ORIGEN;
+  d.origen = ORIGEN; d.visitante = VISITANTE;
   const btn = document.getElementById('form-send'); btn.disabled = true; btn.textContent = 'Enviando…';
   try {
     const body = JSON.stringify(d);
