@@ -341,6 +341,21 @@ let PLANOS = {};     // principal/sotano -> id
 let DESCRIPCION = null; // texto de textos/descripcion.txt (null = sin pestaña)
 let VIDEO = null;       // ID de YouTube de textos/video.txt (null = sin pestaña)
 
+/* Origen de la visita: ?o=whatsapp|idealista|email|redes… (si no, la web de procedencia) */
+const PARAMS = new URLSearchParams(location.search);
+const ORIGEN = (PARAMS.get('o') || (document.referrer && !document.referrer.includes(location.hostname) ? new URL(document.referrer).hostname : '') || 'directo').slice(0, 80);
+/* Tus propias visitas no cuentan: abre la web una vez con ?yo=1 en cada móvil/ordenador tuyo (?yo=0 lo deshace) */
+try { if (PARAMS.get('yo') === '1') localStorage.setItem('noContar', '1'); if (PARAMS.get('yo') === '0') localStorage.removeItem('noContar'); } catch (e) {}
+const NO_CONTAR = (() => { try { return localStorage.getItem('noContar') === '1'; } catch (e) { return false; } })();
+const vistos = new Set();
+function evento(tipo, detalle = '') {
+  if (NO_CONTAR || !CONFIG.API_URL) return;
+  const k = tipo + '|' + detalle; if (vistos.has(k)) return; vistos.add(k);   // cada cosa cuenta una vez por visita
+  const dispositivo = matchMedia('(max-width: 760px)').matches ? 'movil' : 'ordenador';
+  try { fetch(CONFIG.API_URL, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ tipo: 'evento', evento: tipo, detalle, origen: ORIGEN, dispositivo }) }); } catch (e) {}
+}
+
 const imgURL = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
 const thumbURL = (id, w) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
 function setImg(img, id, w) {
@@ -499,10 +514,11 @@ function pararVideo() { const f = document.getElementById('video-frame'); f.inne
 function mostrar(clave, scroll) {
   const t = document.getElementById('tab-' + clave);
   if (!t || t.hidden) clave = 'principal';
-  if (clave === 'video') cargarVideo(); else pararVideo();
+  if (clave === 'video') { cargarVideo(); evento('video'); } else pararVideo();
+  if (clave !== 'principal') evento('pestana', clave);
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.panel === clave)));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + clave));
-  if (location.hash !== '#' + clave) history.replaceState(null, '', '#' + clave + location.search.replace(/^\?/, '?'));
+  if (location.hash !== '#' + clave) history.replaceState(null, '', location.pathname + location.search + '#' + clave);
   if (scroll) document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth' });
 }
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => mostrar(t.dataset.panel)));
@@ -517,6 +533,7 @@ document.querySelector('.tablist').addEventListener('keydown', e => {
 const gal = document.getElementById('gal'), track = document.getElementById('track');
 let galN = 0, galAbierta = false;
 function abrirGaleria(titulo, fotos, inicio = 0) {
+  evento('galeria', titulo);
   galN = fotos.length;
   document.getElementById('gal-title').innerHTML = `${titulo}<small>${galN} foto${galN > 1 ? 's' : ''}</small>`;
   track.innerHTML = fotos.map((f, i) => `<figure class="slide" style="margin:0"><img alt="${caption(f.name, titulo)}" ${i > 1 ? 'loading="lazy"' : ''} data-photo="${f.id}"><p>${caption(f.name, '')}</p></figure>`).join('');
@@ -550,7 +567,7 @@ document.addEventListener('keydown', e => {
 const dlg = document.getElementById('contact'), form = document.getElementById('form'), msg = document.getElementById('form-msg');
 let abiertoEn = 0;
 document.querySelectorAll('[data-contact]').forEach(b => b.addEventListener('click', () => {
-  msg.className = 'msg'; abiertoEn = Date.now(); dlg.showModal();
+  msg.className = 'msg'; abiertoEn = Date.now(); dlg.showModal(); evento('formulario');
   setTimeout(() => form.nombre.focus(), 50);
 }));
 document.getElementById('form-cancel').onclick = () => dlg.close();
@@ -566,7 +583,7 @@ form.addEventListener('submit', async e => {
   if (d.consentimiento !== 'si') return aviso('Necesitamos tu consentimiento para usar los datos de contacto.');
   if (!CONFIG.API_URL) return aviso('El formulario aún no está conectado. Vuelve a intentarlo más tarde.');
   d.ms = Date.now() - abiertoEn;
-  d.origen = document.referrer ? new URL(document.referrer).hostname : (new URLSearchParams(location.search).get('o') || 'directo');
+  d.origen = ORIGEN;
   const btn = document.getElementById('form-send'); btn.disabled = true; btn.textContent = 'Enviando…';
   try {
     const body = JSON.stringify(d);
@@ -618,6 +635,7 @@ function activarEditor(plan, clave) {
    ARRANQUE
    ===================================================================== */
 (async function () {
+  evento('visita');
   await cargarDatos();
   pintarPlanta('principal'); pintarPlanta('sotano'); pintarComunes(); pintarDescripcion(); pintarVideo();
   const h = location.hash.replace('#', '');
