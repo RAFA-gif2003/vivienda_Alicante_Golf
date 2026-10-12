@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bungalow frente al golf · Alicante Golf</title>
-<meta name="description" content="Bungalow en planta baja de doble anchura en Alicante Golf: 115 m² en una planta, terraza de 60 m² frente al golf y sótano acondicionado de 95 m². Plano interactivo, fotos y vídeo.">
-<meta property="og:title" content="Bungalow de doble anchura frente al golf · Alicante Golf">
+<title>Planta baja frente al golf · Alicante Golf</title>
+<meta name="description" content="Planta baja con el ancho de dos bungalows en Alicante Golf: 115 m² en una planta, terraza de 60 m² frente al golf y sótano acondicionado de 95 m². Plano interactivo, fotos y vídeo.">
+<meta property="og:title" content="Planta baja con terraza frente al golf · Alicante Golf">
 <meta property="og:description" content="115 m² en una planta, terraza de 60 m² frente al golf y sótano acondicionado de 95 m². Plano interactivo, fotos y vídeo.">
 <!-- Miniatura al compartir el enlace (WhatsApp, Facebook, Telegram…): es el archivo og.jpg subido a GitHub junto a index.html (1200×630). Para cambiarla, sube otro og.jpg. -->
 <meta property="og:type" content="website">
@@ -40,6 +40,12 @@ header{padding:28px 0 8px}
 h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.7rem,4.6vw,2.6rem);line-height:1.12;margin:.25em 0 .35em;color:var(--green)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;padding:0;list-style:none}
 .chips li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.88rem;color:var(--muted)}
+
+/* Botón de idioma */
+header{position:relative}
+.lang{position:absolute;top:22px;right:16px;border:1px solid var(--line);background:var(--card);color:var(--green);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:6px}
+.lang:hover{border-color:var(--accent)}
+@media (max-width:600px){header.wrap{padding-top:52px}.lang{top:12px;padding:5px 10px;font-size:.78rem}}
 
 /* Pestañas */
 .tabs{position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 82%,rgba(246,243,236,0));padding:14px 0 10px}
@@ -166,8 +172,9 @@ textarea{min-height:90px;resize:vertical}
 <body>
 
 <header class="wrap">
+  <button class="lang" id="lang-btn" type="button" aria-label="Change language"></button>
   <div class="eyebrow">En venta · Alicante Golf</div>
-  <h1>Bungalow de doble anchura frente al golf</h1>
+  <h1>Planta baja con terraza frente al golf</h1>
   <ul class="chips">
     <li>115 m² en una planta</li>
     <li>Terraza 60 m² frente al golf</li>
@@ -251,7 +258,7 @@ textarea{min-height:90px;resize:vertical}
     <label>Mensaje<textarea name="mensaje" maxlength="1500" placeholder="Preguntas, disponibilidad para visitar…"></textarea></label>
     <div class="trap" aria-hidden="true"><label>Web<input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
     <label class="check"><input type="checkbox" name="consentimiento" value="si" required>
-      <span>Acepto que mis datos se usen únicamente para responder a esta solicitud sobre la vivienda. No se ceden a terceros y se borrarán al finalizar la venta. *</span></label>
+      <span>Acepto que mis datos se usen únicamente para atender esta solicitud sobre la vivienda, incluida la información sobre las secciones de esta web que he consultado. No se ceden a terceros y se borrarán al finalizar la venta. *</span></label>
     <div class="actions">
       <button type="button" class="btn ghost" id="form-cancel">Cancelar</button>
       <button type="submit" class="btn" id="form-send">Enviar</button>
@@ -261,6 +268,84 @@ textarea{min-height:90px;resize:vertical}
 </dialog>
 
 <script>
+/* =====================================================================
+   IDIOMA (español / inglés). ?lang=en o ?lang=es en el enlace fuerza el idioma.
+   Si no, se usa el idioma del navegador (español, catalán, gallego o euskera → español; el resto → inglés).
+   ===================================================================== */
+const LANG = (() => {
+  const p = new URLSearchParams(location.search).get('lang');
+  if (p === 'en' || p === 'es') { try { localStorage.setItem('lang', p); } catch (e) {} return p; }
+  try { const g = localStorage.getItem('lang'); if (g === 'en' || g === 'es') return g; } catch (e) {}
+  const nav = (navigator.languages && navigator.languages[0]) || navigator.language || 'es';
+  return /^(es|ca|gl|eu)\b/i.test(nav) ? 'es' : 'en';
+})();
+document.documentElement.lang = LANG;
+const EN = {
+  'En venta · Alicante Golf': 'For sale · Alicante Golf',
+  'Planta baja con terraza frente al golf': 'Ground-floor home with a terrace facing the golf course',
+  'Planta baja frente al golf · Alicante Golf': 'Ground-floor home facing the golf course · Alicante Golf',
+  '115 m² en una planta': '115 m² all on one level',
+  'Terraza 60 m² frente al golf': '60 m² terrace facing the golf course',
+  'Sótano acondicionado 95 m²': '95 m² finished basement',
+  '4 dormitorios · 3 baños': '4 bedrooms · 3 bathrooms',
+  'Piscina, jardines y pádel': 'Pool, gardens and padel court',
+  'Secciones': 'Sections',
+  'Planta principal': 'Main floor', 'Sótano': 'Basement', 'Zonas comunes': 'Communal areas',
+  'Descripción': 'Description', 'Vídeo': 'Video', 'Ver en YouTube': 'Watch on YouTube',
+  '¿Te interesa? Te enviamos más información o concertamos una visita.': 'Interested? We can send you more information or arrange a viewing.',
+  'Solicitar información': 'Request information',
+  'Plano orientativo, no a escala. Superficies aproximadas. Ubicación exacta y datos del propietario se facilitan a interesados.':
+    'Floor plan for guidance only, not to scale. Approximate areas. Exact location and owner details are provided to interested buyers.',
+  'Estoy interesado': "I'm interested", 'Estoy interesado: solicitar más información': "I'm interested: request more information",
+  'Cerrar galería': 'Close gallery', 'Foto anterior': 'Previous photo', 'Foto siguiente': 'Next photo',
+  'Déjanos tus datos y te contactamos. Sin compromiso.': "Leave your details and we'll get in touch. No obligation.",
+  'Nombre *': 'Name *', 'Teléfono': 'Phone', 'Email': 'Email', 'Prefiero que me contactéis por': 'I prefer to be contacted by',
+  'Llamada': 'Phone call', 'Me gustaría visitarla': "I'd like to view it", 'Mensaje': 'Message',
+  'Preguntas, disponibilidad para visitar…': 'Questions, when you could visit…',
+  'Acepto que mis datos se usen únicamente para atender esta solicitud sobre la vivienda, incluida la información sobre las secciones de esta web que he consultado. No se ceden a terceros y se borrarán al finalizar la venta. *':
+    'I agree that my details will be used only to handle this enquiry about the property, including information about which sections of this website I have viewed. They will not be shared with third parties and will be deleted once the sale is completed. *',
+  'Cancelar': 'Cancel', 'Enviar': 'Send', 'Enviando…': 'Sending…',
+  '* Obligatorio. Indica al menos un teléfono o un email.': '* Required. Please give at least a phone number or an email.',
+  'Indica tu nombre.': 'Please enter your name.',
+  'Indica un teléfono o un email para poder contestarte.': 'Please give a phone number or an email so we can reply.',
+  'El email no parece válido.': "That email address doesn't look valid.",
+  'Necesitamos tu consentimiento para usar los datos de contacto.': 'We need your consent to use your contact details.',
+  'El formulario aún no está conectado. Vuelve a intentarlo más tarde.': 'The form is not connected yet. Please try again later.',
+  'No se ha podido enviar. Inténtalo de nuevo en unos minutos.': "It couldn't be sent. Please try again in a few minutes.",
+  '¡Gracias! Hemos recibido tu solicitud y te hemos enviado un email con más información. Si no lo ves en unos minutos, revisa la carpeta de spam o promociones.':
+    "Thank you! We've received your request and sent you an email with more information. If you can't see it in a few minutes, please check your spam or promotions folder.",
+  '¡Gracias! Hemos recibido tu solicitud y te contactaremos en breve.': "Thank you! We've received your request and will be in touch shortly.",
+  'Pulsa una estancia del plano para ver sus fotos': 'Tap a room on the plan to see its photos',
+  'Bajar al sótano': 'Go down to the basement', 'Subir a la planta': 'Go up to the main floor',
+  'Salón-comedor': 'Living-dining room', 'Cocina': 'Kitchen', 'Terraza': 'Terrace', 'Dormitorio principal': 'Master bedroom',
+  'Baño en suite': 'En-suite bathroom', 'Vestidor': 'Walk-in wardrobe', 'Dormitorio 2': 'Bedroom 2', 'Baño 2': 'Bathroom 2',
+  'Despacho / dormitorio 3': 'Study / bedroom 3', 'Salón del sótano': 'Basement lounge', 'Baño del sótano': 'Basement bathroom',
+  'Distribuidor': 'Hallway', 'Cava de vinos': 'Wine cellar', 'Dormitorio 4': 'Bedroom 4',
+  'Piscina': 'Swimming pool', 'Jardines': 'Gardens', 'Pista de pádel': 'Padel court', 'Pista multideporte': 'Multi-sport court',
+  'Parque infantil': "Children's playground", 'Acceso a la urbanización': 'Entrance to the development', 'Aparcamiento': 'Parking'
+};
+const T = s => (LANG === 'en' && EN[s]) || s;
+const fotosTxt = n => LANG === 'en' ? `${n} photo${n > 1 ? 's' : ''}` : `${n} foto${n > 1 ? 's' : ''}`;
+/** Botón de idioma y traducción de los textos fijos (textos, placeholders y etiquetas de accesibilidad). */
+function traducirPagina() {
+  const btn = document.getElementById('lang-btn');
+  btn.innerHTML = LANG === 'en' ? '<span aria-hidden="true">🇪🇸</span> Español' : '<span aria-hidden="true">🇬🇧</span> English';
+  btn.onclick = () => {
+    const nuevo = LANG === 'en' ? 'es' : 'en';
+    try { localStorage.setItem('lang', nuevo); } catch (e) {}
+    const q = new URLSearchParams(location.search); q.set('lang', nuevo);
+    location.search = q.toString();
+  };
+  if (LANG !== 'en') return;
+  document.title = T(document.title);
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentNode.closest('script,style') ? 2 : 1 });
+  const nodos = []; while (w.nextNode()) nodos.push(w.currentNode);
+  nodos.forEach(n => { const t = n.nodeValue.trim(); if (t && EN[t]) n.nodeValue = n.nodeValue.replace(t, EN[t]); });
+  document.querySelectorAll('[placeholder],[aria-label],[title],[alt]').forEach(el => ['placeholder', 'aria-label', 'title', 'alt'].forEach(a => {
+    const v = el.getAttribute(a); if (v && EN[v]) el.setAttribute(a, EN[v]);
+  }));
+}
+
 /* =====================================================================
    CONFIGURACIÓN — lo único que hay que tocar
    ===================================================================== */
@@ -323,7 +408,7 @@ const PLANTAS = {
   }
 };
 
-const COMUNES = [
+const COMUNES_ES = [
   { id:'piscina',  nombre:'Piscina', fotos:['37','38','39'] },
   { id:'jardines', nombre:'Jardines', fotos:['40','41'] },
   { id:'padel',    nombre:'Pista de pádel', fotos:['42'] },
@@ -333,12 +418,16 @@ const COMUNES = [
   { id:'parking',  nombre:'Aparcamiento', fotos:['46'] }
 ];
 
+const COMUNES = COMUNES_ES.map(z => ({ ...z, nombre: T(z.nombre) }));
+Object.values(PLANTAS).forEach(P => { P.titulo = T(P.titulo); P.escalera.texto = T(P.escalera.texto); P.estancias.forEach(e => { e.nombre = T(e.nombre); }); });
+
 /* =====================================================================
    DATOS (Drive vía Apps Script, con respaldo)
    ===================================================================== */
 let FOTOS = {};      // 'NN' -> [{id, name}, …]
 let PLANOS = {};     // principal/sotano -> id
 let DESCRIPCION = null; // texto de textos/descripcion.txt (null = sin pestaña)
+let DESCRIPCION_EN = null; // texto de textos/descripcion_en.txt (versión inglesa)
 let VIDEO = null;       // ID de YouTube de textos/video.txt (null = sin pestaña)
 
 /* Origen de la visita: ?o=whatsapp|idealista|email|redes… (si no, la web de procedencia) */
@@ -358,7 +447,7 @@ function evento(tipo, detalle = '') {
   const k = tipo + '|' + detalle; if (vistos.has(k)) return; vistos.add(k);   // cada cosa cuenta una vez por visita
   const dispositivo = matchMedia('(max-width: 760px)').matches ? 'movil' : 'ordenador';
   try { fetch(CONFIG.API_URL, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ tipo: 'evento', evento: tipo, detalle, origen: ORIGEN, dispositivo, visitante: VISITANTE, n: NVISITA }) }); } catch (e) {}
+    body: JSON.stringify({ tipo: 'evento', evento: tipo, detalle, origen: ORIGEN, dispositivo, visitante: VISITANTE, n: NVISITA, lang: LANG }) }); } catch (e) {}
 }
 
 const imgURL = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
@@ -372,7 +461,7 @@ function setImg(img, id, w) {
 const ACENTOS = { salon:'salón', bano:'baño', banos:'baños', banera:'bañera', sotano:'sótano', padel:'pádel', vegetacion:'vegetación',
   estanteria:'estantería', urbanizacion:'urbanización', jardin:'jardín', cesped:'césped', habitacion:'habitación', despues:'después' };
 function caption(name, fallback) {
-  if (!name) return fallback || '';
+  if (!name || LANG === 'en') return fallback || '';
   const base = name.replace(/\.[^.]+$/, '').split('_');
   const out = [];
   for (let i = 1; i < base.length; i++) {
@@ -403,6 +492,7 @@ async function cargarDatos() {
     }
     if (j && j.ok) {
       if ('descripcion' in j) DESCRIPCION = j.descripcion || null;
+      if ('descripcion_en' in j) DESCRIPCION_EN = j.descripcion_en || null;
       if ('video' in j) VIDEO = j.video || null;     // si se borra video.txt, desaparece la pestaña
     }
   } catch (e) { console.warn('API no disponible, se usa el respaldo', e); }
@@ -424,19 +514,19 @@ function pintarPlanta(clave) {
     <div class="layout">
       <div class="plan-card">
         <div class="plan" id="plan-${clave}">
-          <img class="base skeleton" alt="Plano ${P.titulo}">
+          <img class="base skeleton" alt="${LANG === 'en' ? 'Floor plan' : 'Plano'} ${P.titulo}">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="group" aria-label="Estancias de ${P.titulo}">
-            ${estancias.map(e => `<polygon class="zone" data-id="${e.id}" tabindex="0" role="button" aria-label="Ver fotos: ${e.nombre}" points="${e.pts.map(p => p.join(',')).join(' ')}"><title>${e.nombre}</title></polygon>`).join('')}
+            ${estancias.map(e => `<polygon class="zone" data-id="${e.id}" tabindex="0" role="button" aria-label="${LANG === 'en' ? 'See photos' : 'Ver fotos'}: ${e.nombre}" points="${e.pts.map(p => p.join(',')).join(' ')}"><title>${e.nombre}</title></polygon>`).join('')}
           </svg>
-          ${estancias.map(e => `<button class="badge" data-id="${e.id}" style="left:${e.badge[0]}%;top:${e.badge[1]}%" aria-label="Ver ${fotosDe(e.fotos).length} fotos de ${e.nombre}">${ICON_CAM}${fotosDe(e.fotos).length}</button>`).join('')}
+          ${estancias.map(e => `<button class="badge" data-id="${e.id}" style="left:${e.badge[0]}%;top:${e.badge[1]}%" aria-label="${e.nombre}: ${fotosTxt(fotosDe(e.fotos).length)}">${ICON_CAM}${fotosDe(e.fotos).length}</button>`).join('')}
           <button class="stairs" style="left:${P.escalera.x}%;top:${P.escalera.y}%" data-go="${P.escalera.ir}" aria-label="${P.escalera.texto}" title="${P.escalera.texto}">${ICON_STAIRS}<span class="txt">${P.escalera.texto}</span></button>
           <div class="tip"></div>
         </div>
-        <p class="hint">Pulsa una estancia del plano para ver sus fotos</p>
+        <p class="hint">${T('Pulsa una estancia del plano para ver sus fotos')}</p>
       </div>
       <aside class="rooms">
         <h2>${P.titulo}</h2>
-        ${estancias.map(e => { const f = fotosDe(e.fotos); return `<button class="room" data-id="${e.id}"><img alt="" loading="lazy" data-photo="${f[0].id}"><span><b>${e.nombre}</b><small>${f.length} foto${f.length > 1 ? 's' : ''}</small></span></button>`; }).join('')}
+        ${estancias.map(e => { const f = fotosDe(e.fotos); return `<button class="room" data-id="${e.id}"><img alt="" loading="lazy" data-photo="${f[0].id}"><span><b>${e.nombre}</b><small>${fotosTxt(f.length)}</small></span></button>`; }).join('')}
       </aside>
     </div>`;
 
@@ -473,7 +563,7 @@ function pintarPlanta(clave) {
 function pintarComunes() {
   const g = document.getElementById('comunes-grid');
   const zonas = COMUNES.filter(z => fotosDe(z.fotos).length);
-  g.innerHTML = zonas.map(z => { const f = fotosDe(z.fotos); return `<button class="card" data-id="${z.id}"><img alt="${z.nombre}" loading="lazy" data-photo="${f[0].id}"><span>${z.nombre}<small>${f.length} foto${f.length > 1 ? 's' : ''}</small></span></button>`; }).join('');
+  g.innerHTML = zonas.map(z => { const f = fotosDe(z.fotos); return `<button class="card" data-id="${z.id}"><img alt="${z.nombre}" loading="lazy" data-photo="${f[0].id}"><span>${z.nombre}<small>${fotosTxt(f.length)}</small></span></button>`; }).join('');
   g.querySelectorAll('img[data-photo]').forEach(i => setImg(i, i.dataset.photo, 700));
   g.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => { const z = zonas.find(x => x.id === c.dataset.id); abrirGaleria(z.nombre, fotosDe(z.fotos)); }));
 }
@@ -481,13 +571,14 @@ function pintarComunes() {
 /* Descripción: texto sencillo → HTML ("## " título, "- " lista, **negrita**, línea en blanco = párrafo) */
 function pintarDescripcion() {
   const tab = document.getElementById('tab-descripcion');
-  if (!DESCRIPCION) { tab.hidden = true; return; }
+  const TXT = LANG === 'en' ? DESCRIPCION_EN : DESCRIPCION;
+  if (!TXT) { tab.hidden = true; return; }
   const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const fmt = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   let html = '', lista = false, parrafo = [];
   const cierraP = () => { if (parrafo.length) { html += `<p>${parrafo.map(fmt).join('<br>')}</p>`; parrafo = []; } };
   const cierraL = () => { if (lista) { html += '</ul>'; lista = false; } };
-  DESCRIPCION.split('\n').forEach(l => {
+  TXT.split('\n').forEach(l => {
     const t = l.trim();
     if (/^#(?!#)/.test(t)) return;
     if (!t) { cierraP(); cierraL(); return; }
@@ -540,7 +631,7 @@ let galN = 0, galAbierta = false;
 function abrirGaleria(titulo, fotos, inicio = 0) {
   evento('galeria', titulo);
   galN = fotos.length;
-  document.getElementById('gal-title').innerHTML = `${titulo}<small>${galN} foto${galN > 1 ? 's' : ''}</small>`;
+  document.getElementById('gal-title').innerHTML = `${titulo}<small>${fotosTxt(galN)}</small>`;
   track.innerHTML = fotos.map((f, i) => `<figure class="slide" style="margin:0"><img alt="${caption(f.name, titulo)}" ${i > 1 ? 'loading="lazy"' : ''} data-photo="${f.id}"><p>${caption(f.name, '')}</p></figure>`).join('');
   const w = Math.min(2000, Math.round(window.innerWidth * (window.devicePixelRatio || 1)));
   track.querySelectorAll('img').forEach(i => setImg(i, i.dataset.photo, Math.max(800, w)));
@@ -581,15 +672,15 @@ dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 form.addEventListener('submit', async e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form).entries());
-  const aviso = (t, ok) => { msg.textContent = t; msg.className = 'msg ' + (ok ? 'ok' : 'err'); };
+  const aviso = (t, ok) => { msg.textContent = T(t); msg.className = 'msg ' + (ok ? 'ok' : 'err'); };
   if (!d.nombre || !d.nombre.trim()) return aviso('Indica tu nombre.');
   if (!(d.telefono || '').trim() && !(d.email || '').trim()) return aviso('Indica un teléfono o un email para poder contestarte.');
   if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return aviso('El email no parece válido.');
   if (d.consentimiento !== 'si') return aviso('Necesitamos tu consentimiento para usar los datos de contacto.');
   if (!CONFIG.API_URL) return aviso('El formulario aún no está conectado. Vuelve a intentarlo más tarde.');
   d.ms = Date.now() - abiertoEn;
-  d.origen = ORIGEN; d.visitante = VISITANTE;
-  const btn = document.getElementById('form-send'); btn.disabled = true; btn.textContent = 'Enviando…';
+  d.origen = ORIGEN; d.visitante = VISITANTE; d.lang = LANG;
+  const btn = document.getElementById('form-send'); btn.disabled = true; btn.textContent = T('Enviando…');
   try {
     const body = JSON.stringify(d);
     let ok = false;
@@ -609,7 +700,7 @@ form.addEventListener('submit', async e => {
     setTimeout(() => dlg.open && dlg.close(), (d.email || '').trim() ? 9000 : 4000);
   } catch (err) {
     aviso('No se ha podido enviar. Inténtalo de nuevo en unos minutos.');
-  } finally { btn.disabled = false; btn.textContent = 'Enviar'; }
+  } finally { btn.disabled = false; btn.textContent = T('Enviar'); }
 });
 
 /* =====================================================================
@@ -640,6 +731,7 @@ function activarEditor(plan, clave) {
    ARRANQUE
    ===================================================================== */
 (async function () {
+  traducirPagina();
   evento('visita');
   await cargarDatos();
   pintarPlanta('principal'); pintarPlanta('sotano'); pintarComunes(); pintarDescripcion(); pintarVideo();
