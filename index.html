@@ -52,6 +52,11 @@ header{position:relative}
 .tablist{display:flex;gap:6px;background:#ebe6da;border-radius:12px;padding:4px;width:max-content;max-width:100%;overflow-x:auto}
 .tab{border:0;background:transparent;padding:9px 16px;border-radius:9px;font-weight:600;color:var(--muted);white-space:nowrap}
 .tab[aria-selected="true"]{background:var(--card);color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tab.tab-video{background:var(--accent);color:#fff}
+.tab.tab-video[aria-selected="true"]{background:var(--card);color:var(--accent)}
+.btn-video{margin-top:14px;border:0;border-radius:999px;padding:11px 20px;font-weight:600;font-size:.95rem;background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px}
+.btn-video:hover,.btn-plano:hover{filter:brightness(1.06)}
+.btn.btn-plano{margin-top:6px;background:var(--green-2)}
 
 /* Plano */
 .panel{display:none}
@@ -182,6 +187,7 @@ textarea{min-height:90px;resize:vertical}
     <li>4 dormitorios · 3 baños</li>
     <li>Piscina, jardines y pádel</li>
   </ul>
+  <button class="btn-video" id="btn-video" type="button" hidden><span aria-hidden="true">▶</span> Ver el vídeo (1 min)</button>
 </header>
 
 <nav class="tabs" aria-label="Secciones">
@@ -191,7 +197,7 @@ textarea{min-height:90px;resize:vertical}
       <button class="tab" role="tab" id="tab-sotano" aria-controls="panel-sotano" aria-selected="false" data-panel="sotano">Sótano</button>
       <button class="tab" role="tab" id="tab-comunes" aria-controls="panel-comunes" aria-selected="false" data-panel="comunes">Zonas comunes</button>
       <button class="tab" role="tab" id="tab-descripcion" aria-controls="panel-descripcion" aria-selected="false" data-panel="descripcion" hidden>Descripción</button>
-      <button class="tab" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="false" data-panel="video" hidden>Vídeo</button>
+      <button class="tab tab-video" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="false" data-panel="video" hidden><span aria-hidden="true">▶</span> Vídeo</button>
     </div>
   </div>
 </nav>
@@ -205,7 +211,8 @@ textarea{min-height:90px;resize:vertical}
   <section class="panel" id="panel-descripcion" role="tabpanel" aria-labelledby="tab-descripcion"><article class="texto" id="descripcion"></article></section>
   <section class="panel" id="panel-video" role="tabpanel" aria-labelledby="tab-video">
     <div class="video"><div class="video-frame" id="video-frame"></div>
-      <p><a id="video-link" target="_blank" rel="noopener">Ver en YouTube</a></p></div>
+      <p><a id="video-link" target="_blank" rel="noopener">Ver en YouTube</a></p>
+      <button class="btn btn-plano" id="btn-plano" type="button"><span aria-hidden="true">📐</span> Ver el plano con fotos de cada estancia</button></div>
   </section>
 
   <div class="cta-bar">
@@ -292,6 +299,7 @@ const EN = {
   'Secciones': 'Sections',
   'Planta principal': 'Main floor', 'Sótano': 'Basement', 'Zonas comunes': 'Communal areas',
   'Descripción': 'Description', 'Vídeo': 'Video', 'Ver en YouTube': 'Watch on YouTube',
+  'Ver el vídeo (1 min)': 'Watch the video (1 min)', 'Ver el plano con fotos de cada estancia': 'See the floor plan with photos of every room',
   '¿Te interesa? Te enviamos más información o concertamos una visita.': 'Interested? We can send you more information or arrange a viewing.',
   'Solicitar información': 'Request information',
   'Plano orientativo, no a escala. Superficies aproximadas. Ubicación exacta y datos del propietario se facilitan a interesados.':
@@ -597,6 +605,7 @@ function pintarVideo() {
   if (!VIDEO || !/^[\w-]{11}$/.test(VIDEO)) { tab.hidden = true; return; }
   document.getElementById('video-link').href = 'https://youtu.be/' + VIDEO;
   tab.hidden = false;
+  document.getElementById('btn-video').hidden = false;
 }
 function cargarVideo() {
   const f = document.getElementById('video-frame');
@@ -618,6 +627,8 @@ function mostrar(clave, scroll) {
   if (scroll) document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth' });
 }
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => mostrar(t.dataset.panel)));
+document.getElementById('btn-video').addEventListener('click', () => mostrar('video', true));
+document.getElementById('btn-plano').addEventListener('click', () => mostrar('principal', true));
 document.querySelector('.tablist').addEventListener('keydown', e => {
   const tabs = [...document.querySelectorAll('.tab')].filter(t => !t.hidden); const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const j = (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; tabs[j].focus(); mostrar(tabs[j].dataset.panel); }
